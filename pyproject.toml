@@ -8,5 +8,15 @@ authors = [
     { name="Victor Pierozan", email="victor@pierozan.com" },
 ]
 dependencies = [
-    
+    "sqlalchemy>=2.0.38",
+]
+
+[dependency-groups]
+dev = [
+    "aiosqlite>=0.21.0",
+    "ipython>=8.32.0",
+    "pyright>=1.1.393",
+    "pytest>=8.3.4",
+    "pytest-asyncio>=0.25.3",
+    "ruff>=0.9.5",
 ]
