@@ -8,6 +8,7 @@ authors = [
     { name="Victor Pierozan", email="victor@pierozan.com" },
 ]
 dependencies = [
+    "pydantic>=2.10.6",
     "sqlalchemy>=2.0.38",
 ]
 
@@ -19,4 +20,5 @@ dev = [
     "pytest>=8.3.4",
     "pytest-asyncio>=0.25.3",
     "ruff>=0.9.5",
+    "sqlfluff>=3.3.1",
 ]

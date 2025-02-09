@@ -1,16 +1,25 @@
 import sqlalchemy as sa
-from sqlalchemy.orm import Mapped, mapped_column
+import sqlfluff
 
-from noormsql import Registry, TableBase
+from noormsql import TableBase, TableRegistry
 
-registry = Registry()
+registry = TableRegistry()
+
+
+metadata = sa.MetaData()
+
+user_table = sa.Table(
+    "user",
+    metadata,
+    sa.Column("name", sa.String),
+)
 
 
 # This should parse into a pydantic model
 class User(TableBase):
+    __table__ = user_table
     # Still not sure we need this Mapped, SQLModel does not have it
-    id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str]
+    name: str
 
 
 # we want this to be explicit, as to not depend on import order
@@ -18,10 +27,19 @@ registry.register(User)
 
 
 def test_simple_query():
-    query = sa.select(User).where(User.id == 1)
+    query = sa.select(User.name).where(User.name == "Victor")
 
-    assert (
-        query.compile(compile_kwargs={"literal_binds": True})
-        == "SELECT user.id, user.name FROM user WHERE user.id = :id_1"
+    assert_sql(
+        str(query.compile(compile_kwargs={"literal_binds": True})),
+        """
+        SELECT "user".name FROM "user" WHERE "user".name = 'Victor'
+        """,
     )
-    pass
+
+
+def canon_sql(sql: str):
+    return sqlfluff.fix(sql.replace("\n", ""))
+
+
+def assert_sql(sql: str, expected: str):
+    assert canon_sql(sql) == canon_sql(expected)
